@@ -1,8 +1,33 @@
 const express = require('express');
+const User = require('./models/User');
+const session = require('express-session');
+const passport = require('passport');
+const authRoutes = require('./routes/auth');
+const protectedRoutes = require('./routes/protected');
+const apiRoutes = require('./routes/api');
+const db = require('./database/db');
+
+//const express = require('express');
 const sql = require('mssql');
 const app = express();
-const port = 3234;
+const port = 3000;
 
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport');
+
+// Include your API routes
+app.use('/auth', authRoutes);
+app.use('/protected', protectedRoutes);
+app.use('/api', apiRoutes);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+/*
 // Database configuration
 const config = {
   user: 'WebsiteAdmin',
@@ -43,3 +68,4 @@ app.get('/api/greeting', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+*/
