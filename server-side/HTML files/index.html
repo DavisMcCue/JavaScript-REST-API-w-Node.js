@@ -1,20 +1,70 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Registration</title>
+  <title>Registration and Login</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    main {
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .auth-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .auth-links a {
+      margin: 0 10px;
+      font-size: 16px;
+    }
+
+    /* Style the "Register" button */
+    .register-button {
+      display: block;
+      margin: 20px auto; /* Center the button */
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <h2>User Registration</h2>
-  <form action="/register" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-    <button type="submit">Register</button>
-  </form>
+  <header>
+    <h1>Welcome to My App</h1>
+    <div class="auth-links">
+      <a href="/register">Register</a>
+      <a href="/login">Log In</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Your main content goes here -->
+  </main>
 </body>
 </html>
