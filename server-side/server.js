@@ -1,52 +1,69 @@
 const express = require('express');
-const sql = require('mssql');
+const mysql = require('mysql2');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const path = require('path');  // Import the 'path' module
+//const fs = require('fs');  // Import the 'fs' module
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-// Configure your SQL Server connection
-const config = {
-  user: 'WebsiteAdmin',
-  password: 'temp_password34$#',
-  server: 'DP16959\\SQLEXPRESS',
-  database: 'WebsiteHost1',
-  options: {
-    encrypt: true, // Use this if you're on Windows Azure
-  },
-  port: 1433, // Change this to the actual port used by your SQL Server instance
-};
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Set the path for serving static files (like HTML)
+app.use(express.static(path.join(__dirname, 'HTML files')));
 
-// Serve static files from the 'public' folder
-//app.use(express.static('public'));
-
-// Register route
-app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    const pool = await sql.connect(config);
-    const result = await pool.request()
-      .input('username', sql.NVarChar, username)
-      .input('password', sql.NVarChar, password)
-      .query('INSERT INTO users (username, password) VALUES (@username, @password)');
-
-    console.log(result);
-    res.status(201).send('User registered successfully!');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
+// Welcome message for the root path
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'HTML files', 'index.html'));  // Adjust the path as needed
 });
 
-// Route to serve the registration form
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || '127.0.0.1',
+    user: process.env.DB_USER || 'newuser',
+    password: process.env.DB_PASSWORD || 'temper_user34$#',
+    database: process.env.DB_DATABASE || 'websitehost1',
+    waitForConnections: true,
+    connectionLimit: process.env.DB_CONNECTION_LIMIT || 10,
+    queueLimit: 0,
+    /*ssl: {
+      ca: fs.readFileSync(process.env.DB_CA_PATH || '/path/to/ca-cert.pem'),
+      key: fs.readFileSync(process.env.DB_KEY_PATH || '/path/to/client-key.pem'),
+      cert: fs.readFileSync(process.env.DB_CERT_PATH || '/path/to/client-cert.pem')
+    }*/
+  });
+
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.get('/register', (req, res) => {
+  res.sendFile(__dirname + '/HTML files/register.html');
+});
+
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+
+  // Implement your registration logic here
+  pool.query('INSERT INTO userloginfo (username, password) VALUES (?, ?)', [username, password], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('Error registering user.');
+    } else {
+      res.redirect('/');
+      //res.send('Registration successful!');
+    }
+  });
+});
+
+// ... (other routes)
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
