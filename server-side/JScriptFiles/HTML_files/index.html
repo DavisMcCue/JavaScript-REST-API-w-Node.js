@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login or Register</title>
+    <link rel="stylesheet" href= "../CSS/index.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Website</h1>
+        <div class="buttons">
+            <button id="loginButton">Log In</button>
+            <button id="registerButton">Register</button>
+        </div>
+    </div>
+
+    <script>
+      document.getElementById('registerButton').addEventListener('click', function() {
+          window.location.href = '/register';
+      });
+  </script>
+</body>
+</html>
