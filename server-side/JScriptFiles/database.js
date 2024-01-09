@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
@@ -10,6 +11,8 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Enable CORS for all routes
+app.use(cors());
 
 // Serve the favicon.ico file
 //app.use(favicon(path.join(__dirname, 'Falco', 'favicon.ico')));
@@ -19,6 +22,9 @@ const indexPath = path.join(__dirname, 'HTML_files', 'index.html');
 
 // Serve CSS files from the CSS folder
 app.use('/CSS', express.static(path.join(__dirname, 'CSS')));
+
+// Serve static files from the 'JScriptFiles' folder
+app.use('/JScriptFiles', express.static('JScriptFiles'));
 
 
 // Define your routes
@@ -56,12 +62,12 @@ connection.connect((err) => {
 app.post('/register', (req, res) => {
     const { FirstName, LastName, email, username, password } = req.body;
 
-    // Insert the registration data into the 'users' table
-    const query = 'INSERT INTO userinfo (FirstName, LastName, username, email, password) VALUES (?, ?, ?, ?, ?)';
+    // Insert the registration data into the 'userinfo' table
+    const query = 'INSERT INTO userinfo (FirstName, LastName, email, username, password) VALUES (?, ?, ?, ?, ?)';
+    
     connection.query(query, [FirstName, LastName, email, username, password], (queryErr) => {
         if (queryErr) {
             console.error('Error inserting data into MySQL:', queryErr);
-            console.log('Error inserting data into MySQL:', queryErr);
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
