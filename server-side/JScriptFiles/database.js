@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = 3000;
@@ -38,6 +39,11 @@ app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'HTML_Files', 'register.html'));
 });
 
+app.get('/login', (req, res) => {
+  // Assuming you have a register.html file in the HTML_Files folder
+  res.sendFile(path.join(__dirname, 'HTML_Files', 'login.html'));
+});
+
 
 // MySQL database connection details
 // Create a connection pool
@@ -59,22 +65,70 @@ connection.connect((err) => {
     console.log('Connected to MySQL database');
 });
 
-app.post('/register', (req, res) => {
-    const { FirstName, LastName, email, username, password } = req.body;
+// Registration route
+app.post('/register', async (req, res) => {
+  const { FirstName, LastName, email, username, password } = req.body;
+
+  try {
+    // Hash the password before storing it in the database
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the registration data into the 'userinfo' table
-    const query = 'INSERT INTO userinfo (FirstName, LastName, email, username, password) VALUES (?, ?, ?, ?, ?)';
-    
-    connection.query(query, [FirstName, LastName, email, username, password], (queryErr) => {
-        if (queryErr) {
-            console.error('Error inserting data into MySQL:', queryErr);
-            res.status(500).json({ error: 'Internal Server Error' });
-            return;
-        }
+    const query = 'INSERT INTO userinfo (FirstName, LastName, Email, Username, Password) VALUES (?, ?, ?, ?, ?)';
+    connection.query(query, [FirstName, LastName, email, username, hashedPassword], (queryErr) => {
+      if (queryErr) {
+        console.error('Error inserting data into MySQL:', queryErr);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
 
-        // Registration successful
-        res.status(200).json({ message: 'Registration successful' });
+      // Registration successful
+      res.status(200).json({ message: 'Registration successful' });
     });
+  } catch (hashError) {
+    console.error('Error hashing password:', hashError);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Login route
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Check if the user exists in the database
+  const query = 'SELECT * FROM userinfo WHERE username = ?';
+  connection.query(query, [username], (err, results) => {
+    if (err) {
+      console.error('Error querying MySQL:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+
+    if (results.length === 0) {
+      // User not found
+      res.status(401).json({ error: 'Invalid username or password' });
+      return;
+    }
+
+    // User found, compare hashed password
+    const hashedPassword = results[0].password;
+    bcrypt.compare(password, hashedPassword, (bcryptErr, match) => {
+      if (bcryptErr) {
+        console.error('Error comparing passwords:', bcryptErr);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (match) {
+        // Passwords match, login successful
+        res.status(200).json({ message: 'Login successful' });
+        // Redirect to a different form or perform other actions here
+      } else {
+        // Passwords do not match
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+    });
+  });
 });
 
 app.listen(port, () => {
