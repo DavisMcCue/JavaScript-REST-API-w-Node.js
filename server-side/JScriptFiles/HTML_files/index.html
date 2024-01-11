@@ -9,12 +9,15 @@
 <body>
     <div class="container">
         <h1>Welcome to the Website</h1>
-        <div class="buttons">
-            <button id="loginButton">Log In</button>
-            <button id="registerButton">Register</button>
+      </div>
+      <div class="buttons-container">
+        <div class="Logbuttons">
+          <button id="loginButton">Log In</button>
         </div>
-    </div>
-
+        <div class="Regbuttons">
+          <button id="registerButton">Register</button>
+        </div>
+      </div>
     <script>
       document.getElementById('registerButton').addEventListener('click', function() {
           window.location.href = '/register';
@@ -24,5 +27,9 @@
           window.location.href = '/login';
       });
   </script>
+
+<footer>
+    <p>&copy; 2024 Footer Placed Here</p>
+</footer>
 </body>
 </html>

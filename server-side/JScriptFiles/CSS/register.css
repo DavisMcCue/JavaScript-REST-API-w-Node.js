@@ -14,12 +14,12 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  width: 300px;
+  width: 400px;
   text-align: center; /* Centering the content */
 }
 
 .login-form {
-  padding: 30px;
+  padding:30px;
   color: #333;
 }
 
@@ -29,9 +29,10 @@ h1 {
 }
 
 .input-group {
-  width: 100%;
+  width: 95%;
   margin-bottom: 15px;
   text-align: left; /* Adjust text alignment */
+  padding-left: 5px;
 }
 
 label {
@@ -62,3 +63,4 @@ button {
 button:hover {
   background-color: #12202b;
 }
+
