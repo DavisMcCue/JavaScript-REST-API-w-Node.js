@@ -40,6 +40,7 @@
 
         document.getElementById('registrationForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            
 
         const formData = new FormData(this);
 
@@ -57,12 +58,19 @@
         })
         .then(response => response.json())
         .then(data => {
-         console.log(data); // Handle the response from the server
-        })
-        .catch(error => {
-         console.error('Error:', error);
-        });
+         // Check if registration was successful
+        if (data.message === 'Registration successful') {
+        // Redirect to login page
+        window.location.href = '/login.html';
+        } else {
+        // Handle other cases if needed
+        console.error('Registration failed:', data.error);
+        }
+    })
+    .catch(error => {
+    console.error('Error during registration:', error);
     });
+});
     </script>
 
 </body>

@@ -63,7 +63,7 @@ input {
 }
 .buttons-container {
   position: absolute;
-  top: 15px;
+  top: 28px;
   right: 18px;
   display: flex; /* Use flexbox to arrange buttons side by side */
 }

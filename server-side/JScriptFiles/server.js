@@ -18,6 +18,9 @@ app.get('/', (req, res) => {
 
   // Serve CSS files from the CSS folder
   app.use('/CSS', express.static(path.join(__dirname, 'CSS')));
+
+  // Serve static files from the "public" directory
+  app.use(express.static('HTML_Files'));
   
   app.get('/register', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
@@ -46,7 +49,7 @@ app.post('/register', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
         return;
       }
-
+      // Send a JSON response for successful registration
       res.status(200).json({ message: 'Registration successful' });
     });
   } catch (hashError) {
