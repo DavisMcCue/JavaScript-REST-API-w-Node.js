@@ -1,14 +1,26 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const dotenv = require('dotenv');
 const database = require('./database'); // Import the database module
 
 const app = express();
 const port = 3000;
 
+// Load environment variables from a .env file
+dotenv.config();
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Set up sessions with a secret from the environment variable
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'fallback-secret', // Use an environment variable or a fallback
+  resave: false,
+  saveUninitialized: true
+}));
 
 // Define your routes
 app.get('/', (req, res) => {
@@ -35,6 +47,7 @@ app.get('/', (req, res) => {
   app.get('/mainPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'HTML_Files', 'mainPage.html')); // or render a success page
   });
+  
 
 app.post('/register', async (req, res) => {
   const { FirstName, LastName, email, username, password } = req.body;
@@ -69,11 +82,31 @@ app.post('/login', (req, res) => {
     if (err) throw err;
 
     if (results.length > 0) {
-      res.redirect('/mainPage');
+      // Store user information in the session
+      req.session.userId = results[0].id;
+      req.session.username = results[0].username;
+      res.json({ success: true, username: results[0].username });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
+});
+
+app.get('/mainPage', (req, res) => {
+  // Check if the user is authenticated before serving the main page
+  if (req.session.userId && req.session.username) {
+    res.sendFile(__dirname + 'HTML_Files', 'mainPage.html');
+  } else {
+    res.redirect('/login'); // Redirect to login if not authenticated
+  }
+});
+
+app.get('/getUserInfo', (req, res) => {
+  if (req.session.userId && req.session.username) {
+    res.json({ success: true, username: req.session.username });
+  } else {
+    res.status(401).json({ success: false });
+  }
 });
 
 app.listen(port, () => {

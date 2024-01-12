@@ -33,7 +33,7 @@
         <button type="submit">Register</button>
     </form>
     </div>
-
+    
     <script>
         // register.js
         const registerUrl = 'http://localhost:3000/register';
@@ -41,7 +41,6 @@
         document.getElementById('registrationForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
-
         const formData = new FormData(this);
 
         const userData = {};
@@ -60,6 +59,7 @@
         .then(data => {
          // Check if registration was successful
         if (data.message === 'Registration successful') {
+        
         // Redirect to login page
         window.location.href = '/login.html';
         } else {
@@ -72,6 +72,5 @@
     });
 });
     </script>
-
 </body>
 </html>
