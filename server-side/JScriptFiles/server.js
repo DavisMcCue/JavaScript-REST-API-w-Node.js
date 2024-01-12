@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const ejs = require('ejs');
 const dotenv = require('dotenv');
 const database = require('./database'); // Import the database module
 
@@ -14,6 +15,9 @@ dotenv.config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Set up sessions with a secret from the environment variable
 app.use(session({
@@ -74,20 +78,45 @@ app.post('/register', async (req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const UserHashedPasswordEntry = bcrypt.hash(password, 10);
-  
-  const query = `SELECT * FROM userinfo WHERE username = ?`;
+  // Assuming the structure: ID, FirstName, LastName, Username, Password
+  const query = 'SELECT ID, FirstName, LastName, Username, Password FROM userinfo WHERE Username = ?';
 
-  database.connection.query(query, [username, UserHashedPasswordEntry], (err, results) => {
-    if (err) throw err;
+  database.connection.query(query, [username], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+
+    console.log('Database Results:', results); // Log the results for debugging
 
     if (results.length > 0) {
-      // Store user information in the session
-      req.session.userId = results[0].id;
-      req.session.username = results[0].username;
-      res.json({ success: true, username: results[0].username });
+      const hashedPasswordFromDB = results[0].Password;
+
+      if (hashedPasswordFromDB) {
+        bcrypt.compare(password, hashedPasswordFromDB, (compareErr, isMatch) => {
+          if (compareErr) {
+            console.error('Error comparing passwords:', compareErr);
+            return res.status(500).json({ success: false, message: 'Internal Server Error' });
+          }
+
+          console.log('Password Comparison Result:', isMatch); // Log the comparison result for debugging
+
+          if (isMatch) {
+            // Store user information in the session
+            req.session.userId = results[0].ID;
+            req.session.username = results[0].Username;
+
+            // Render mainPage.ejs and pass the username as a variable
+            res.render('mainPage', { username: results[0].Username });
+          } else {
+            res.status(401).json({ success: false, message: 'Invalid credentials' });
+          }
+        });
+      } else {
+        res.status(500).json({ success: false, message: 'Hashed password not found in database' });
+      }
     } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
   });
 });
@@ -107,6 +136,18 @@ app.get('/getUserInfo', (req, res) => {
   } else {
     res.status(401).json({ success: false });
   }
+});
+
+app.post('/logout', (req, res) => {
+  // Clear the session
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.json({ success: true });
+    }
+  });
 });
 
 app.listen(port, () => {
