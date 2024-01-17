@@ -24,8 +24,29 @@ nav a {
     font-weight: bold;
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
 .username {
     font-weight: bold;
-    color: #fff;
-    margin-left: auto;
+    color: white;
+    margin-right: 10px;
+}
+
+form {
+    margin: 0; /* Remove default margin */
+}
+
+button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #c9302c;
 }

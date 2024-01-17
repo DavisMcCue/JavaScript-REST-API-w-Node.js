@@ -121,6 +121,20 @@ app.post('/login', (req, res) => {
   });
 });
 
+// Add this route in your server.js
+app.post('/logout', (req, res) => {
+  // Clear the session
+  req.session.destroy(err => {
+      if (err) {
+          console.error('Error destroying session:', err);
+          return res.status(500).json({ success: false, message: 'Internal Server Error' });
+      }
+
+      // Redirect to the login page
+      res.redirect('/login'); // Update the path to your login page
+  });
+});
+
 app.get('/mainPage', (req, res) => {
   // Check if the user is authenticated before serving the main page
   if (req.session.userId && req.session.username) {
