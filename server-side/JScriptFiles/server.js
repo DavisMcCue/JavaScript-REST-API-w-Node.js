@@ -55,16 +55,31 @@ app.use((req, res, next) => {
 });
 
 //Functions
+
+// Middleware to check authentication for uploads
+function isUploader(req, res, next) {
+  const sessionUsername = req.session.username ? req.session.username.toLowerCase() : null;
+  const targetUploader = 'drdavee32'; // or get it from the request or other source
+
+  if (sessionUsername === targetUploader.toLowerCase()) {
+    // User is the uploader, allow the upload
+    next();
+  } else {
+    res.status(403).send('Permission denied');
+  }
+}
+
 // Middleware to check authentication
 function isAuthenticated(req, res, next) {
   const sessionUsername = req.session.username ? req.session.username.toLowerCase() : null;
-  const targetUsername = 'drdavee32'; // or get it from the request or other source
-
-  if (sessionUsername === targetUsername.toLowerCase()) {
-    // User is authenticated, proceed to the next middleware or route
+  
+  if (sessionUsername === 'drdavee32') {
+    // User is "drdavee32", proceed to the next middleware or route
+    res.locals.username = req.session.username;
     next();
   } else {
-    res.status(403).send('Permission denied, You do not have access upload an image!');
+    // Redirect to unauthorized access page or handle differently
+    res.redirect('/resume');
   }
 }
 
@@ -84,6 +99,11 @@ app.get('/', (req, res) => {
   app.get('/register', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_Files', 'register.html'));
+  });
+
+  app.get('/uploader', (req, res) => {
+    // Assuming you have a register.html file in the HTML_Files folder
+    res.sendFile(path.join(__dirname, 'HTML_Files', 'uploader.html'));
   });
 
   app.get('/resume', (req, res) => {
@@ -108,15 +128,24 @@ app.get('/', (req, res) => {
       res.redirect('/login'); // Redirect to login if not authenticated
     }
   });
-  
-  app.get('/getUserInfo', (req, res) => {
+
+ // Protected route for uploader
+app.get('/uploader', isAuthenticated, (req, res) => {
+  res.render('uploader', { username: res.locals.username });
+});
+
+// Protected route for resume
+app.get('/resume', isAuthenticated, (req, res) => {
+  res.render('resume', { username: res.locals.username });
+});
+
+app.get('/getUserInfo', (req, res) => {
     if (req.session.userId && req.session.username) {
       res.json({ success: true, username: req.session.username });
     } else {
       res.status(401).json({ success: false });
     }
   });
-
 
 //Post Section
 app.post('/register', async (req, res) => {
@@ -187,7 +216,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
+app.post('/upload', isUploader, upload.single('file'), (req, res) => {
   // Get username from the session
   const username = req.session.username;
 
@@ -229,7 +258,6 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
   });
 });
 
-// Add this route in your server.js
 app.post('/logout', (req, res) => {
   // Clear the session
   req.session.destroy(err => {
@@ -242,19 +270,6 @@ app.post('/logout', (req, res) => {
       res.redirect('/login'); // Update the path to your login page
   });
 });
-
-app.post('/logout', (req, res) => {
-  // Clear the session
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.json({ success: true });
-    }
-  });
-});
-
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
