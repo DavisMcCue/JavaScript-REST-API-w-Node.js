@@ -10,7 +10,12 @@
 <body>
     <nav>
         <ul>
-            <li><a href="/uploader">Resume</a></li>
+            <% if (username === 'Drdavee32') { %>
+                <li><a href="/uploader">Uploader</a></li>
+                <li><a href="/resume">Resume</a></li>
+            <% } else { %>
+                <li><a href="/resume">Resume</a></li>
+            <% } %>
             <li><a href="#about">About Me</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="#Video-Game-Circuit">Video Game Circuit</a></li>

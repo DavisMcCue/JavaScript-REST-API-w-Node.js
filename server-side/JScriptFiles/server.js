@@ -89,6 +89,7 @@ app.get('/', (req, res) => {
     // Assuming you have an index.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_files', 'index.html'));
   });
+  
 
   // Serve CSS files from the CSS folder
   app.use('/CSS', express.static(path.join(__dirname, 'CSS')));
@@ -129,12 +130,12 @@ app.get('/', (req, res) => {
     }
   });
 
- // Protected route for uploader
-app.get('/uploader', isAuthenticated, (req, res) => {
+// Protected route for dashboard, uploader, and resume for "drdavee32"
+app.get(['/uploader'], isAuthenticated, (req, res) => {
   res.render('uploader', { username: res.locals.username });
 });
 
-// Protected route for resume
+// Protected route for profile for other users
 app.get('/resume', isAuthenticated, (req, res) => {
   res.render('resume', { username: res.locals.username });
 });
