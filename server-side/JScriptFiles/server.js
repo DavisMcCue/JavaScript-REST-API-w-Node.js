@@ -54,6 +54,20 @@ app.use((req, res, next) => {
   next();
 });
 
+//Functions
+// Middleware to check authentication
+function isAuthenticated(req, res, next) {
+  const sessionUsername = req.session.username ? req.session.username.toLowerCase() : null;
+  const targetUsername = 'drdavee32'; // or get it from the request or other source
+
+  if (sessionUsername === targetUsername.toLowerCase()) {
+    // User is authenticated, proceed to the next middleware or route
+    next();
+  } else {
+    res.status(403).send('Permission denied, You do not have access upload an image!');
+  }
+}
+
 //Get Section
 // Define your routes
 app.get('/', (req, res) => {
@@ -173,7 +187,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
   // Get username from the session
   const username = req.session.username;
 
@@ -228,49 +242,6 @@ app.post('/logout', (req, res) => {
       res.redirect('/login'); // Update the path to your login page
   });
 });
-
-app.post('/upload', upload.single('file'), (req, res) => {
-  // Get username from the session and convert to lowercase
-  const username = req.session.username ? req.session.username.toLowerCase() : null;
-
-  // Check if username is "drdavee32" (case-insensitive)
-  if (username !== 'drdavee32') {
-    return res.status(403).send('Permission denied');
-  }
-
-  // Find the user ID based on the username
-  const userQuery = 'SELECT id FROM userinfo WHERE username = ?';
-
-    database.connection.query(userQuery, [username], (err, results) => {
-    if (err) {
-      console.error('Error querying user:', err);
-      res.status(500).send('Error uploading file');
-      return;
-    }
-
-    if (results.length === 0) {
-      res.status(404).send('User not found');
-      return;
-    }
-
-    const userId = results[0].id;
-
-    // Save file details and user ID to MySQL database
-    const filePath = path.join(uploadFolder, req.file.filename);
-    const insertQuery = 'INSERT INTO pictures (filename, path, user_id) VALUES (?, ?, ?)';
-    const insertValues = [req.file.filename, filePath, userId];
-
-    database.connection.query(insertQuery, insertValues, (err) => {
-      if (err) {
-        console.error('Error inserting into pictures:', err);
-        res.status(500).send('Error uploading file to database');
-      } else {
-        res.send('File uploaded successfully!');
-      }
-    });
-  });
-});
-
 
 app.post('/logout', (req, res) => {
   // Clear the session
