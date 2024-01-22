@@ -1,3 +1,25 @@
-<!-- dashboard.ejs -->
-<h1>Welcome to Resume <%= username %></h1>
-<!-- Other dashboard content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume</title>
+    <!-- Include any other head elements -->
+</head>
+<body>
+    <!-- Include the navigation bar using EJS syntax -->
+    <%- include('mainPage.ejs', { username: username }) %>
+
+    <h1>Image Gallery</h1>
+
+    <!-- Display images dynamically -->
+    <div class="image-container">
+        <% images.forEach(image => { %>
+            <img src="<%= image.path %>/<%= image.filename %>" alt="<%= image.filename %>">
+        <% }); %>
+    </div>
+
+    <!-- Other content of the image gallery page -->
+</body>
+</html>

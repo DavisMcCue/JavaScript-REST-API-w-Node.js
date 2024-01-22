@@ -79,7 +79,7 @@ function isAuthenticated(req, res, next) {
     next();
   } else {
     // Redirect to unauthorized access page or handle differently
-    res.redirect('/resume');
+    res.status(403).send('Cant Redirect');
   }
 }
 
@@ -106,11 +106,6 @@ app.get('/', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_Files', 'uploader.html'));
   });
-
-  app.get('/resume', (req, res) => {
-    // Assuming you have a register.html file in the HTML_Files folder
-    res.sendFile(path.join(__dirname, 'HTML_Files', 'resume.html'));
-  });
   
   app.get('/login', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
@@ -130,14 +125,26 @@ app.get('/', (req, res) => {
     }
   });
 
+  app.get('/resume', (req, res) => {
+    const targetUsername = 'Drdavee32';
+
+    // Query the database to get images for the user with userId
+    const query = 'SELECT filename, path FROM pictures WHERE user_id = (SELECT id FROM userinfo WHERE username = ? LIMIT 1)';
+    database.connection.query(query, [targetUsername], (err, results) => {
+      if (err) {
+        console.error('Error retrieving images:', err);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+  
+      // Render the EJS template and pass the image data
+      res.render('resume', { username: req.session.username, images: results });
+    });
+  });
+
 // Protected route for dashboard, uploader, and resume for "drdavee32"
 app.get(['/uploader'], isAuthenticated, (req, res) => {
   res.render('uploader', { username: res.locals.username });
-});
-
-// Protected route for profile for other users
-app.get('/resume', isAuthenticated, (req, res) => {
-  res.render('resume', { username: res.locals.username });
 });
 
 app.get('/getUserInfo', (req, res) => {
