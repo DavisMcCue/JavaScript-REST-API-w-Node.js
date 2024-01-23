@@ -55,7 +55,6 @@ app.use((req, res, next) => {
 });
 
 //Functions
-
 // Middleware to check authentication for uploads
 function isUploader(req, res, next) {
   const sessionUsername = req.session.username ? req.session.username.toLowerCase() : null;
@@ -89,7 +88,6 @@ app.get('/', (req, res) => {
     // Assuming you have an index.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_files', 'index.html'));
   });
-  
 
   // Serve CSS files from the CSS folder
   app.use('/CSS', express.static(path.join(__dirname, 'CSS')));
@@ -115,6 +113,10 @@ app.get('/', (req, res) => {
   app.get('/mainPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'HTML_Files', 'mainPage.html')); // or render a success page
   });
+  
+  const absolutePath = path.join(__dirname, 'uploads');
+  console.log('Absolute Path:', absolutePath);
+  app.use('/uploads', express.static(absolutePath));
   
   app.get('/mainPage', (req, res) => {
     // Check if the user is authenticated before serving the main page

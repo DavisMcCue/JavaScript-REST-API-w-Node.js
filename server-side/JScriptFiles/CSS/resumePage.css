@@ -1,0 +1,39 @@
+.slideshow-container {
+    position: relative;
+    text-align: center;
+}
+h1 {
+    text-align: center;
+}
+.mySlides {
+    display: none;
+    margin: 0 auto; /* Center the slides */
+}
+
+iframe,
+img {
+    width: 750px;
+    height: 650px;
+    object-fit:fill;
+}
+
+.prev, .next {
+    font-size: 24px; /* Adjust the arrow size as needed */
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -12px; /* Center vertically */
+    padding: 16px;
+    color: white;
+    background-color: black;
+    border: none;
+    border-radius: 5px;
+}
+.prev {
+    left: 2px;
+
+}
+.next {
+    right: 2px;
+}
