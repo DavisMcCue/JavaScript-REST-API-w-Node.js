@@ -99,12 +99,12 @@ app.get('/', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_Files', 'register.html'));
   });
-
+  
   app.get('/uploader', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_Files', 'uploader.html'));
   });
-  
+
   app.get('/login', (req, res) => {
     // Assuming you have a register.html file in the HTML_Files folder
     res.sendFile(path.join(__dirname, 'HTML_Files', 'login.html'));
@@ -126,6 +126,11 @@ app.get('/', (req, res) => {
       res.redirect('/login'); // Redirect to login if not authenticated
     }
   });
+
+  // Define a route for '/video_Game_Circuit'
+  app.get('/video_Game_Circuit', isAuthenticated, (req, res) => {
+  res.render('video_Game_Circuit', { username: res.locals.username });
+});
 
   app.get('/resume', (req, res) => {
     const targetUsername = 'Drdavee32';

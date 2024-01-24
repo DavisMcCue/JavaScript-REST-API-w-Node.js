@@ -3,9 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../CSS/uploader.css">
   <title>File Upload</title>
 </head>
 <body>
+  <nav id="dynamicNav"></nav>
+    <script>
+        // Replace this with your dynamic data or fetch it from somewhere
+        const username = 'Drdavee32';
+
+        // Create a function to generate the navigation based on the username
+        function generateNavigation(username) {
+            const nav = document.getElementById('dynamicNav');
+            const ul = document.createElement('ul');
+
+            if (username === 'Drdavee32') {
+                // Add Resume and Upload links for Drdavee32
+                ul.innerHTML += '<li><a href="/resume">Resume</a></li>';
+                ul.innerHTML += '<li><a href="/uploader">Upload</a></li>';
+            } else {
+                // Add only Resume link for other users
+                ul.innerHTML += '<li><a href="/resume">Resume</a></li>';
+            }
+
+            // Add common links for all users
+            ul.innerHTML += '<li><a href="#about">About Me</a></li>';
+            ul.innerHTML += '<li><a href="#contact">Contact</a></li>';
+            ul.innerHTML += '<li><a href="/video_Game_Circuit">Video Game Circuit</a></li>';
+
+            // Append the generated list to the navigation
+            nav.appendChild(ul);
+
+            // Add user information and logout button
+            const userInfoDiv = document.createElement('div');
+            userInfoDiv.className = 'user-info';
+            userInfoDiv.innerHTML = '<div class="username">Welcome, ' + username + '</div>';
+
+            const logoutForm = document.createElement('form');
+            logoutForm.action = '/logout';
+            logoutForm.method = 'post';
+            logoutForm.innerHTML = '<button type="submit">Log Off</button>';
+
+            userInfoDiv.appendChild(logoutForm);
+            nav.appendChild(userInfoDiv);
+        }
+
+        // Call the function with the username
+        generateNavigation(username);
+    </script>
   <h1>File Upload</h1>
   <form action="/upload" method="post" enctype="multipart/form-data">
     <br>
