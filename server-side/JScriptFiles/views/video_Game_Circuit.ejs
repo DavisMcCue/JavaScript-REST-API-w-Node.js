@@ -9,7 +9,32 @@
 </head>
 <body>
     <!-- Include the navigation bar using EJS syntax -->
-    <%- include('mainPage.ejs', { username: username }) %>
-    <p>hi</p>
+    <nav>
+        <ul>
+            <% if (username === 'Drdavee32') { %>
+                <li><a href="/resume">Resume</a></li>
+                <li><a href="/uploader">Upload</a></li>
+            <% } else { %>
+                <li><a href="/resume">Resume</a></li>
+            <% } %>
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="/video_Game_Circuit">Video Game Circuit</a></li>
+        </ul>
+        <div class="user-info">
+            <div class="username">Welcome, <%= username %></div>
+            <form action="/logout" method="post">
+                <button type="submit">Log Off</button>
+            </form>
+        </div>
+    </nav>
+    <div class="sidebar">
+    <h2>Sidebar</h2>
+    <ul>
+        <li><a href="#">Link 1</a></li>
+        <li><a href="#">Link 2</a></li>
+        <li><a href="#">Link 3</a></li>
+    </ul>
+</div>
 </body>
 </html>
