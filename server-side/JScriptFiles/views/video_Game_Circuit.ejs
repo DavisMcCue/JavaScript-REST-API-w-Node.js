@@ -29,12 +29,75 @@
         </div>
     </nav>
     <div class="sidebar">
-    <h2>Sidebar</h2>
+    <h2>Game Review Portal</h2>
     <ul>
-        <li><a href="#">Link 1</a></li>
-        <li><a href="#">Link 2</a></li>
+        <li><a href="#">Game Update</a></li>
+        <li><a href="#"></a></li>
         <li><a href="#">Link 3</a></li>
     </ul>
 </div>
+
+<!-- Image Box -->
+<div class="box" onclick="openPopup()">+</div>
+
+<div class="popup" id="myPopup">
+    <div class="popup-content">
+      <p>Add A Game</p>
+      <div class="input-field">
+        <label for="input1">Game Title:</label>
+        <input type="text" id="gameTitle">
+      </div>
+      <div class="input-field">
+        <label for="input2">Review:</label>
+        <input type="text" id="gameReview">
+      </div>
+      <button class="btn-submit" onclick="submitForm()">Submit</button>
+      <button class="btn-cancel" onclick="closePopup()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <img src="../images/GhostBusters.png" alt="GhostBusters">
+    <div id ="TitlePage">Title</div>
+  </div>
+
+  <script>
+    function openPopup() {
+      var popup = document.getElementById('myPopup');
+      popup.style.display = 'block';
+    }
+  
+    function closePopup() {
+      var popup = document.getElementById('myPopup');
+      popup.style.display = 'none';
+    }
+  
+    function submitForm() {
+      var input1Value = document.getElementById('gameTitle').value;
+      var input2Value = document.getElementById('gameReview').value;
+  
+      // Add your form submission logic here
+      //alert('Form submitted with values:\nText Field 1: ' + input1Value + '\nText Field 2: ' + input2Value);
+      closePopup();
+
+      // Show result box
+      var resultBox = document.getElementById('resultBox');
+      resultBox.style.display = 'block';
+
+      // Set the new title
+      document.getElementById('TitlePage').innerText = input1Value;
+
+      // Move original box over
+      // Move original box over
+      var originalBox = document.getElementById('originalBox');
+
+      // Check if originalBox is not null
+      if (originalBox) {
+          originalBox.style.marginLeft = (parseFloat(originalBox.style.marginLeft) + 120) + 'px'; // Move by 120 pixels (adjust as needed)
+      } else {
+          console.error("Original box not found");
+      }
+    }
+  </script>
 </body>
 </html>
