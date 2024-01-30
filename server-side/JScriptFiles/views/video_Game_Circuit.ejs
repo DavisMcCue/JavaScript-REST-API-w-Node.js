@@ -38,7 +38,7 @@
 </div>
 
 <!-- Image Box -->
-<div class="box" onclick="openPopup()">+</div>
+<div class="originalBox" onclick="openPopup()">+</div>
 
 <div class="popup" id="myPopup">
     <div class="popup-content">
@@ -71,33 +71,66 @@
       var popup = document.getElementById('myPopup');
       popup.style.display = 'none';
     }
-  
     function submitForm() {
       var input1Value = document.getElementById('gameTitle').value;
       var input2Value = document.getElementById('gameReview').value;
   
       // Add your form submission logic here
       //alert('Form submitted with values:\nText Field 1: ' + input1Value + '\nText Field 2: ' + input2Value);
-      closePopup();
+    closePopup();
 
-      // Show result box
-      var resultBox = document.getElementById('resultBox');
-      resultBox.style.display = 'block';
+    // Show result box
+    var resultBox = document.getElementById('resultBox');
+    resultBox.style.display = 'block';
+    
+    // Set the new title
+    document.getElementById('TitlePage').innerText = input1Value;
 
-      // Set the new title
-      document.getElementById('TitlePage').innerText = input1Value;
+    // Move original box over
+    var originalBox = document.querySelector('.originalBox');
+    
+    // Check if originalBox is not null
+    if (originalBox) {
+      // Get the current left position as an integer
+      var currentLeft = parseInt(window.getComputedStyle(originalBox).left, 10) || 0;
 
-      // Move original box over
-      // Move original box over
-      var originalBox = document.getElementById('originalBox');
+      // Add 120 pixels to the current left position
+      var newLeft = currentLeft + 275;
 
-      // Check if originalBox is not null
-      if (originalBox) {
-          originalBox.style.marginLeft = (parseFloat(originalBox.style.marginLeft) + 120) + 'px'; // Move by 120 pixels (adjust as needed)
-      } else {
-          console.error("Original box not found");
-      }
+      // Apply the new left position to the style
+      originalBox.style.left = newLeft + 'px';
+      AddBox();
+      console.log("Box moved successfully");
+    } else {
+      console.error("Original box not found");
     }
-  </script>
+  }
+  let resultBoxCount = 0;
+  function AddBox()
+  {
+  if (resultBoxCount < 5) { // Limit to a maximum of 5 boxes
+    resultBoxCount++;
+
+    const resultContainer = document.getElementById('result-container');
+
+    // Create a new result box
+    const resultBox = document.createElement('div');
+    resultBox.className = 'result-box';
+    resultBox.id = 'result-box-' + resultBoxCount;
+    resultBox.innerHTML = 'Result Box ' + resultBoxCount;
+
+    // Calculate the left position based on the count
+    const leftPosition = (resultBoxCount - 1) * 275; // Adjust this value as needed
+
+    // Apply the left position to the style
+    resultBox.style.left = leftPosition + 'px';
+
+    // Append the new result box to the container
+    resultContainer.appendChild(resultBox);
+  } else {
+    alert("You can only add up to 5 result boxes.");
+  }
+}
+</script>
 </body>
 </html>

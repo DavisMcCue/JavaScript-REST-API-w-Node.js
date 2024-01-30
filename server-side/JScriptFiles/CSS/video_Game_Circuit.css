@@ -95,7 +95,7 @@ button:hover {
     background-color: #c9302c;
 }
   
-.box {
+.originalBox {
     width: 100px;
     height: 100px;
     background-color: lightblue;
@@ -183,5 +183,4 @@ button:hover {
 
 #originalBox {
     transition: margin-left 0.5s ease-in-out; /* Add transition for smooth movement */
-
   }
