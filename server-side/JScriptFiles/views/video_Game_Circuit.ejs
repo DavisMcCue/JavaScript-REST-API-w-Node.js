@@ -31,106 +31,83 @@
     <div class="sidebar">
     <h2>Game Review Portal</h2>
     <ul>
+        <li><a href="#" onclick="openPopup('Game Update')">Add A Game For Review</a></li>
         <li><a href="#">Game Update</a></li>
         <li><a href="#"></a></li>
         <li><a href="#">Link 3</a></li>
     </ul>
 </div>
 
-<!-- Image Box -->
-<div class="originalBox" onclick="openPopup()">+</div>
+<div id="boxes"></div>
 
-<div class="popup" id="myPopup">
-    <div class="popup-content">
-      <p>Add A Game</p>
-      <div class="input-field">
-        <label for="input1">Game Title:</label>
-        <input type="text" id="gameTitle">
-      </div>
-      <div class="input-field">
-        <label for="input2">Review:</label>
-        <input type="text" id="gameReview">
-      </div>
-      <button class="btn-submit" onclick="submitForm()">Submit</button>
-      <button class="btn-cancel" onclick="closePopup()">Cancel</button>
-    </div>
-  </div>
+<div id="popup">
+    <h2>Add Box</h2>
+    <form id="boxForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" required>
+        
+        <label for="description">Description:</label>
+        <textarea id="description" required></textarea>
+        
+        <button type="button" onclick="addBox()">Submit</button>
+        <button type="button" onclick="closePopup()">Cancel</button>
+    </form>
+</div>
 
-  <div class="result-box" id="resultBox">
-    <img src="../images/GhostBusters.png" alt="GhostBusters">
-    <div id ="TitlePage">Title</div>
-  </div>
+<script>
+    // Array to store created boxes
+    var boxArray = [];
 
-  <script>
     function openPopup() {
-      var popup = document.getElementById('myPopup');
-      popup.style.display = 'block';
+        // Display the popup
+        document.getElementById('popup').style.display = 'block';
     }
-  
+
     function closePopup() {
-      var popup = document.getElementById('myPopup');
-      popup.style.display = 'none';
+        // Close the popup
+        document.getElementById('popup').style.display = 'none';
+
+        // Clear the form fields
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
     }
-    function submitForm() {
-      var input1Value = document.getElementById('gameTitle').value;
-      var input2Value = document.getElementById('gameReview').value;
-  
-      // Add your form submission logic here
-      //alert('Form submitted with values:\nText Field 1: ' + input1Value + '\nText Field 2: ' + input2Value);
-    closePopup();
 
-    // Show result box
-    var resultBox = document.getElementById('resultBox');
-    resultBox.style.display = 'block';
-    
-    // Set the new title
-    document.getElementById('TitlePage').innerText = input1Value;
+    function addBox() {
+        // Get values from the form
+        var title = document.getElementById('title').value;
+        var description = document.getElementById('description').value;
 
-    // Move original box over
-    var originalBox = document.querySelector('.originalBox');
-    
-    // Check if originalBox is not null
-    if (originalBox) {
-      // Get the current left position as an integer
-      var currentLeft = parseInt(window.getComputedStyle(originalBox).left, 10) || 0;
+        // Create a box object
+        var box = {
+            title: title,
+            description: description
+        };
 
-      // Add 120 pixels to the current left position
-      var newLeft = currentLeft + 275;
+        // Add the box to the array
+        boxArray.push(box);
 
-      // Apply the new left position to the style
-      originalBox.style.left = newLeft + 'px';
-      AddBox();
-      console.log("Box moved successfully");
-    } else {
-      console.error("Original box not found");
+        // Display the array of boxes
+        displayBoxes();
+        
+        // Close the popup
+        closePopup();
     }
-  }
-  let resultBoxCount = 0;
-  function AddBox()
-  {
-  if (resultBoxCount < 5) { // Limit to a maximum of 5 boxes
-    resultBoxCount++;
 
-    const resultContainer = document.getElementById('result-container');
+    function displayBoxes() {
+        // Get the container for displaying boxes
+        var boxesContainer = document.getElementById('boxes');
 
-    // Create a new result box
-    const resultBox = document.createElement('div');
-    resultBox.className = 'result-box';
-    resultBox.id = 'result-box-' + resultBoxCount;
-    resultBox.innerHTML = 'Result Box ' + resultBoxCount;
+        // Clear previous content
+        boxesContainer.innerHTML = '';
 
-    // Calculate the left position based on the count
-    const leftPosition = (resultBoxCount - 1) * 275; // Adjust this value as needed
-
-    // Apply the left position to the style
-    resultBox.style.left = leftPosition + 'px';
-
-    // Append the new result box to the container
-    resultContainer.appendChild(resultBox);
-  } else {
-    alert("You can only add up to 5 result boxes.");
-  }
-}
+        // Loop through the array and display each box
+        boxArray.forEach(function(box, index) {
+            var boxElement = document.createElement('div');
+            boxElement.classList.add('box');
+            boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description;
+            boxesContainer.appendChild(boxElement);
+        });
+    }
 </script>
 </body>
 </html>

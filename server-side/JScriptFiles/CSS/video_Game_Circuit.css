@@ -94,93 +94,31 @@ button {
 button:hover {
     background-color: #c9302c;
 }
-  
-.originalBox {
-    width: 100px;
-    height: 100px;
-    background-color: lightblue;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: fixed;
-    margin-left: 175px;
-    margin-top: 125px;
+#container {
+    text-align: center;
 }
-
-.popup {
+#boxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: absolute;
+    margin-top: 95px;
+    margin-left: 175px;
+}
+.box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+}
+#popup {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: #fff;
     padding: 20px;
-    background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1;
-  }
-
-.popup-content {
-    text-align: center;
-  }
-
-.btn-submit,
-.btn-cancel {
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-  }
-
-.input-field {
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-  }
-
-.input-field label {
-    margin-bottom: 5px;
-  }
-
-.input-field input,
-.input-field textarea {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    resize: vertical; /* Allow vertical resizing of the textarea */
-  }
-
-.input-field textarea {
-    height: 100px; /* Set the height of the textarea */
-  }
-
-.result-box {
-    display: none;
-    width: 200px;
-    height: 200px;
-    background-color:#333;
-    position: absolute;
-    margin-top: 200px;
-    margin-left: 275px;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    padding: 10px;
-    overflow: hidden; /* Hide overflowing content */
+    z-index: 1000;
 }
-
-.result-box img {
-    max-width: 100%;
-    max-height: 50%;
-    display: block; /* Ensure the image is a block-level element */
-}
-
-.result-box #resultTitle {
-    max-height: 50%;
-    overflow: hidden; /* Hide overflowing content */
-    box-sizing: border-box; /* Include padding in height calculations */
-    padding-top: 25px; /* Add padding to separate image and title */
-}
-
-#originalBox {
-    transition: margin-left 0.5s ease-in-out; /* Add transition for smooth movement */
-  }
