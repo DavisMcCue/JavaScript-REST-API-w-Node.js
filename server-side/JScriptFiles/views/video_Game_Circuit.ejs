@@ -58,56 +58,68 @@
     // Array to store created boxes
     var boxArray = [];
 
-    function openPopup() {
-        // Display the popup
-        document.getElementById('popup').style.display = 'block';
-    }
-
-    function closePopup() {
-        // Close the popup
-        document.getElementById('popup').style.display = 'none';
-
-        // Clear the form fields
-        document.getElementById('title').value = '';
-        document.getElementById('description').value = '';
-    }
-
-    function addBox() {
-        // Get values from the form
-        var title = document.getElementById('title').value;
-        var description = document.getElementById('description').value;
-
-        // Create a box object
-        var box = {
-            title: title,
-            description: description
-        };
-
-        // Add the box to the array
-        boxArray.push(box);
-
-        // Display the array of boxes
+    // Function to load boxes from localStorage on page load
+window.onload = function() {
+    var storedBoxes = localStorage.getItem('boxArray');
+    if (storedBoxes) {
+        boxArray = JSON.parse(storedBoxes);
         displayBoxes();
+    }
+};
+
+function openPopup() {
+    // Display the popup
+    document.getElementById('popup').style.display = 'block';
+}
+
+function closePopup() {
+    // Close the popup
+    document.getElementById('popup').style.display = 'none';
+
+    // Clear the form fields
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+}
+
+function addBox() {
+    // Get values from the form
+    var title = document.getElementById('title').value;
+    var description = document.getElementById('description').value;
+
+    // Create a box object
+    var box = {
+        title: title,
+        description: description
+};
+
+    // Add the box to the array
+    boxArray.push(box);
+
+    // Save the updated array to localStorage
+    localStorage.setItem('boxArray', JSON.stringify(boxArray));
+
+    // Display the array of boxes
+    displayBoxes();
         
-        // Close the popup
-        closePopup();
-    }
+    // Close the popup
+    closePopup();
+}
 
-    function displayBoxes() {
-        // Get the container for displaying boxes
-        var boxesContainer = document.getElementById('boxes');
+function displayBoxes() {
+    // Get the container for displaying boxes
+    var boxesContainer = document.getElementById('boxes');
 
-        // Clear previous content
-        boxesContainer.innerHTML = '';
+    // Clear previous content
+    boxesContainer.innerHTML = '';
 
-        // Loop through the array and display each box
-        boxArray.forEach(function(box, index) {
-            var boxElement = document.createElement('div');
-            boxElement.classList.add('box');
-            boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description;
-            boxesContainer.appendChild(boxElement);
-        });
-    }
+    // Loop through the array and display each box
+    boxArray.forEach(function(box, index) {
+    var boxElement = document.createElement('div');
+    boxElement.classList.add('box');
+    boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description;
+    boxesContainer.appendChild(boxElement);
+    });
+}
 </script>
 </body>
 </html>
