@@ -15,6 +15,7 @@ const port = 3000;
 // Specify the folder to store uploaded pictures
 const uploadFolder = 'uploads/';
 
+//Image Upload Page
 // Ensure the upload folder exists
 if (!fs.existsSync(uploadFolder)) {
   fs.mkdirSync(uploadFolder);
@@ -31,14 +32,42 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+
+const imagesFolder = 'images/';
+
+// Ensure the upload folder exists
+if (!fs.existsSync(imagesFolder)) {
+  fs.mkdirSync(imagesFolder);
+}
+
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, imagesFolder);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload1 = multer({ storage: imageStorage });
+
 // Load environment variables from a .env file
 dotenv.config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.set('views', path.join(__dirname, 'views'));
+// Log the value of __dirname
+console.log('__dirname:', __dirname);
+
+// Log the result of path.join(__dirname, 'JscriptFiles', 'views')
+const viewsDirectory = path.join(__dirname, 'views');
+console.log('Views directory:', viewsDirectory);
+
+// Set up the views directory and view engine
+app.set('views', viewsDirectory);
 app.set('view engine', 'ejs');
+
 
 // Set up sessions with a secret from the environment variable
 app.use(session({
@@ -110,22 +139,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'HTML_Files', 'login.html'));
   });
   
+  app.get('/loadImages', (req, res) => {
+    res.sendFile(path.join(__dirname, 'HTML_Files', 'loadImages.html')); // or render a success page
+  });
+
   app.get('/mainPage', (req, res) => {
-    res.sendFile(path.join(__dirname, 'HTML_Files', 'mainPage.html')); // or render a success page
+    res.render('mainPage'); // Render the mainPage view
   });
   
   const absolutePath = path.join(__dirname, 'uploads');
   console.log('Absolute Path:', absolutePath);
   app.use('/uploads', express.static(absolutePath));
-  
-  app.get('/mainPage', (req, res) => {
-    // Check if the user is authenticated before serving the main page
-    if (req.session.userId && req.session.username) {
-      res.sendFile(__dirname + 'HTML_Files', 'mainPage.html');
-    } else {
-      res.redirect('/login'); // Redirect to login if not authenticated
-    }
-  });
 
   // Define a route for '/video_Game_Circuit'
   app.get('/video_Game_Circuit', isAuthenticated, (req, res) => {
@@ -272,6 +296,21 @@ app.post('/upload', isUploader, upload.single('file'), (req, res) => {
     });
   });
 });
+
+app.post('/gameImage', upload1.single('file'), (req, res) => {
+  if (!req.file) {
+      console.error('No file uploaded');
+      return res.status(400).send('No file uploaded');
+  }
+
+  const { filename, path } = req.file;
+  const name = req.body.name;
+
+  console.log('File uploaded:', filename);
+  console.log('File path:', path);
+  console.log('Name:', name);
+});
+
 
 app.post('/logout', (req, res) => {
   // Clear the session

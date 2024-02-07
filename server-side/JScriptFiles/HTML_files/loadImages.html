@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../CSS/uploader.css">
+  <title>File Upload</title>
+</head>
+<body>
+    <h2>Upload Image</h2>
+    <input type="file" id="imageInput" name="image" accept="image/*">
+    Name: <input type="text" id="imageName" name="name"><br><br>
+    <button onclick="uploadImage()">Upload</button>
+    <div id="message"></div>
+
+    <script>
+        function uploadImage() {
+            var formData = new FormData();
+            var imageFile = document.getElementById('imageInput').files[0];
+            var imageName = document.getElementById('imageName').value;
+            formData.append('file', imageFile); // Change 'image' to 'file' as it matches the field name expected by the server
+            formData.append('name', imageName);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/gameImage', true); // Change '/upload' to '/gameImage' to match the server endpoint
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById('message').innerHTML = xhr.responseText;
+                } else {
+                    document.getElementById('message').innerHTML = 'Error uploading image.';
+                }
+            };
+
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
