@@ -299,17 +299,31 @@ app.post('/upload', isUploader, upload.single('file'), (req, res) => {
 
 app.post('/gameImage', upload1.single('file'), (req, res) => {
   if (!req.file) {
-      console.error('No file uploaded');
-      return res.status(400).send('No file uploaded');
+    console.error('No file uploaded');
+    return res.status(400).send('No file uploaded');
   }
 
   const { filename, path } = req.file;
-  const name = req.body.name;
+  const name = req.body.name; // Retrieve the name from the request body
 
   console.log('File uploaded:', filename);
   console.log('File path:', path);
   console.log('Name:', name);
+
+  // Save file details and user ID to MySQL database
+  const insertQuery = 'INSERT INTO imagedirectory (filename, path, name) VALUES (?, ?, ?)';
+  const insertValues = [filename, path, name]; // Use filename, path, and name
+
+  database.connection.query(insertQuery, insertValues, (err) => {
+    if (err) {
+      console.error('Error inserting into pictures:', err);
+      res.status(500).send('Error uploading file to database');
+    } else {
+      res.send('File uploaded into Database successfully!');
+    }
+  });
 });
+
 
 
 app.post('/logout', (req, res) => {
