@@ -116,7 +116,26 @@ function displayBoxes() {
     var boxElement = document.createElement('div');
     boxElement.classList.add('box');
     boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description;
-    boxesContainer.appendChild(boxElement);
+    
+     // Make AJAX request to get image path based on box title
+     var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/getImagePath?title=' + encodeURIComponent(box.title), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    // Image path received, set src attribute for imgElement
+                    var imgElement = document.createElement('img');
+                    imgElement.src = xhr.responseText;
+                    imgElement.alt = 'Image'; // Add alt text for accessibility
+                    boxElement.appendChild(imgElement);
+                } else {
+                    console.error('Error getting image path:', xhr.status);
+                }
+            }
+        };
+        xhr.send();
+
+        boxesContainer.appendChild(boxElement);
     });
 }
 </script>

@@ -324,7 +324,27 @@ app.post('/gameImage', upload1.single('file'), (req, res) => {
   });
 });
 
+// Endpoint to handle AJAX request
+app.get('/getImagePath', (req, res) => {
+  const title = req.query.title;
 
+  // Execute MySQL query to check for a match in the name column
+  const sql = 'SELECT path FROM imagedirectory WHERE name = ?';
+  database.connection.query(sql, [title], (err, results) => {
+    if (err) {
+      console.error('Error executing query: ', err);
+      res.status(500).send('Error executing query');
+      return;
+    }
+
+    if (results.length > 0) {
+      // Send back the path to the image
+      res.send(results[0].image_path);
+    } else {
+      res.status(404).send('Image not found');
+    }
+  });
+});
 
 app.post('/logout', (req, res) => {
   // Clear the session
