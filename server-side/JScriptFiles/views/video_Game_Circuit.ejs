@@ -105,39 +105,62 @@ function addBox() {
 }
 
 function displayBoxes() {
-    // Get the container for displaying boxes
     var boxesContainer = document.getElementById('boxes');
-
-    // Clear previous content
     boxesContainer.innerHTML = '';
+
+    // Define a function to make the AJAX request and append the image
+    function fetchAndAppendImage(box, boxElement) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/getImagePath?title=' + encodeURIComponent(box.title), true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var imgElement = document.createElement('img');
+                        imgElement.src = xhr.responseText;
+                        imgElement.alt = 'Image';
+                        boxElement.appendChild(imgElement);
+                        resolve(); // Resolve the promise when the image is appended
+                    }
+                    else if (xhr.status === 404) 
+                    {
+                    console.error('Image not found for:', box.title);
+                    var placeholderImgElement = document.createElement('img');
+                    //placeholderImgElement.src = 'placeholder_image.jpg'; // Path to placeholder image
+                    //placeholderImgElement.alt = 'Placeholder Image';
+                    boxElement.appendChild(placeholderImgElement);
+                    resolve(); // Resolve the promise when the placeholder image is appended
+                    }
+                    else {
+                        console.error('Error getting image path:', xhr.status);
+                        reject(xhr.status); // Reject the promise if there's an error
+                    }
+                }
+            };
+            xhr.send();
+        });
+    }
 
     // Loop through the array and display each box
     boxArray.forEach(function(box, index) {
-    var boxElement = document.createElement('div');
-    boxElement.classList.add('box');
-    boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description;
-    
-     // Make AJAX request to get image path based on box title
-     var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/getImagePath?title=' + encodeURIComponent(box.title), true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Image path received, set src attribute for imgElement
-                    var imgElement = document.createElement('img');
-                    imgElement.src = xhr.responseText;
-                    imgElement.alt = 'Image'; // Add alt text for accessibility
-                    boxElement.appendChild(imgElement);
-                } else {
-                    console.error('Error getting image path:', xhr.status);
-                }
-            }
-        };
-        xhr.send();
+        var boxElement = document.createElement('div');
+        boxElement.classList.add('box');
+        boxElement.innerHTML = '<strong>' + box.title + '</strong><br>' + box.description + '<br><br>' ;
 
-        boxesContainer.appendChild(boxElement);
+        // Make AJAX request and append image, then append the box element
+        fetchAndAppendImage(box, boxElement)
+            .then(function() {
+                boxesContainer.appendChild(boxElement);
+            })
+            .catch(function(errorStatus) {
+                // Handle error if needed
+                console.error('Error fetching image for box:', box.title, 'Status:', errorStatus);
+            });
     });
 }
 </script>
+<footer>
+    <p>&copy; 2024 Footer Placed Here</p>
+</footer>
 </body>
 </html>
