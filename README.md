@@ -1,4 +1,4 @@
-# Custom Website README
+# Custom Website
 
 ## Introduction
 This is a custom website project designed to allow users to log in, register, and access certain functionalities based on their roles. The website provides a secure authentication system and role-based access control (RBAC) to ensure that users only see content and features appropriate to their permissions.
